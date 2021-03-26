@@ -139,9 +139,10 @@ def create_duct_wall(in_out):
 
 #---- new cell too close to any of the existing cells?
 def too_close(p, dist):
-  for c in cell_centers:
-    if (p-c).length < dist:
-      return True
+  if any((c-p).length < dist for c in cell_centers): return True
+  #for c in cell_centers:
+  #  if (p-c).length < dist:
+  #    return True
   return False
 
 #---- create cells around a duct segment
@@ -155,7 +156,7 @@ def create_seg_cells(s):
   #r1 = cell_types[s.ctype]['radii'][0] + ((cell_types[s.ctype]['radii'][1] - cell_types[s.ctype]['radii'][0]) / 6.0)  # near inner wall
   r1 = cell_types[s.ctype]['radii'][1] - 2.5 * C_RADIUS# near inner wall
   z12 = z2 - z1
-  for i in range(120): # try to create this number of random cell seeds
+  for i in range(12): # try to create this number of random cell seeds
     create = False
     for j in range(80000): # with many retries to help fill gaps in the seed distribution
       a1 = random.uniform(0.0, 2.0 * math.pi)
@@ -230,15 +231,45 @@ bpy.data.objects.remove(bpy.data.objects['Icosphere'])
 #-------------------------------------------------------------------------------
 
 # animate (to apply physics) 
-bpy.context.scene.frame_current = 1
-for f in range(38):
-  bpy.context.view_layer.update()
-  bpy.context.scene.frame_current += 1
+#bpy.context.scene.frame_current = 1
+#for f in range(3):
+#  bpy.context.view_layer.update()
+#  bpy.context.scene.frame_current += 1
 
 # save the duct and cell meshes in an obj file
 for obj in bpy.data.collections["Duct"].all_objects: obj.select_set(False)
 for obj in bpy.data.collections["Cells"].all_objects: obj.select_set(True)
-bpy.ops.export_mesh.stl(filepath="sample.stl", use_selection=True)
+#bpy.ops.export_mesh.ply(filepath="sample.ply", use_selection=True)
+
+print(bpy.context.object.name)
+obj = bpy.context.object
+
+fname = "mesh.ply"
+with open(fname, "w") as file:
+  file.write("ply\n")
+  #file.write("format binary_little_endian 1.0\n")
+  file.write("format ascii 1.0\n")
+  #file.write("comment Mini-Gland mesh format 1.0\n")
+  file.write("element vertex " + str(len(obj.data.vertices)) + "\n")
+  file.write("property float x\n")
+  file.write("property float y\n")
+  file.write("property float z\n")
+  file.write("element face " + str(len(obj.data.polygons)) + "\n")
+  file.write("property list uchar int vertex_index\n")
+  #file.write("property int face_type\n")
+  file.write("end_header\n")
+
+  for v in obj.data.vertices:
+    p = v.co + obj.location
+    file.write(str(p.x) + " " + str(p.y) + " " + str(p.z) + "\n")
+
+  for poly in obj.data.polygons:
+    file.write(str(poly.loop_total) + " ")
+    for loop_index in range(poly.loop_start, poly.loop_start + poly.loop_total):
+      file.write(str(obj.data.loops[loop_index].vertex_index) + " ")
+    file.write("\n")
+
+
 
 #-------------------------------------------------------------------------------
 # DEBUG: run interactive interpreter
