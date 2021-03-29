@@ -41,13 +41,13 @@ NF = total number of surface triangle faces
 NT = total number of tetrahedra
 NC = total number of cells
 
-face_type 0 = basal
+face_type 0 = apical
           1 = basolateral
-		  2 = apical
+          2 = basal
 
 cell_type 0 = acinus
           1 = intercalated duct
-		  2 = striated duct		  
+	  2 = striated duct		  
 
 note:
 - only the apical cells need to contain tetrahedra  		  

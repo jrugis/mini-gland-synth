@@ -23,6 +23,7 @@ import math
 import mathutils
 import numpy as np
 import random
+import time
 
 #-------------------------------------------------------------------------------
 # class (structure) definitions
@@ -75,6 +76,32 @@ cell_centers = list()
 #-------------------------------------------------------------------------------
 # FUNCTION DEFINITIONS
 #-------------------------------------------------------------------------------
+
+#---- find distance from point P to line segment AB
+def dist(A, B, P):
+  if (A == P) or (B == P):
+    return 0
+
+  v1 = (P - A).copy()
+  v1.normalize()
+  v2 = (B - A).copy()
+  v2.normalize()
+  if(np.arccos(v1.dot(v2)) > math.pi / 2.0):
+    v1 = (P - A).copy()
+    return(v1.length)
+
+  v1 = (P - B).copy()
+  v1.normalize()
+  v2 = (A - B).copy()
+  v2.normalize()
+  if(np.arccos(v1.dot(v2)) > math.pi / 2.0):
+    v1 = (P - B).copy()
+    return(v1.length)
+
+  ints = mathutils.geometry.intersect_point_line(P, A, B)
+  v1 = (ints[0] - P).copy()
+  return(v1.length)
+  #return abs(  dot(A - B, P[::-1]) + det([A, B]) )    /      norm(A - B)
 
 #---- combine mesh objects using boolean union modifier
 def combine(prev):
@@ -156,11 +183,11 @@ def create_seg_cells(s):
   #r1 = cell_types[s.ctype]['radii'][0] + ((cell_types[s.ctype]['radii'][1] - cell_types[s.ctype]['radii'][0]) / 6.0)  # near inner wall
   r1 = cell_types[s.ctype]['radii'][1] - 2.5 * C_RADIUS# near inner wall
   z12 = z2 - z1
-  for i in range(12): # try to create this number of random cell seeds
+  for i in range(120): # try to create this number of random cell seeds
     create = False
     for j in range(80000): # with many retries to help fill gaps in the seed distribution
-      a1 = random.uniform(0.0, 2.0 * math.pi)
       # a duct cell seed placement point
+      a1 = random.uniform(0.0, 2.0 * math.pi)
       z = random.uniform(z1 + C_RADIUS, z2 - C_RADIUS) 
       p = mathutils.Vector((r1*math.sin(a1), r1*math.cos(a1), z))
       if len(cell_centers)==0 or not too_close(p, 3.0 * C_RADIUS): #   but accept only if not too close to other seeds
@@ -193,6 +220,10 @@ def create_cells():
 #-------------------------------------------------------------------------------
 #  MAIN PROGRAM
 #-------------------------------------------------------------------------------
+
+import time
+
+start = time.time()
 
 bpy.context.scene.gravity = (0,0,0) # turn gravity off
 
@@ -231,45 +262,71 @@ bpy.data.objects.remove(bpy.data.objects['Icosphere'])
 #-------------------------------------------------------------------------------
 
 # animate (to apply physics) 
-#bpy.context.scene.frame_current = 1
-#for f in range(3):
-#  bpy.context.view_layer.update()
-#  bpy.context.scene.frame_current += 1
+bpy.context.scene.frame_current = 1
+for f in range(38):
+  bpy.context.view_layer.update()
+  bpy.context.scene.frame_current += 1
 
-# save the duct and cell meshes in an obj file
+# save the duct and cell meshes to file
 for obj in bpy.data.collections["Duct"].all_objects: obj.select_set(False)
 for obj in bpy.data.collections["Cells"].all_objects: obj.select_set(True)
-#bpy.ops.export_mesh.ply(filepath="sample.ply", use_selection=True)
+bpy.ops.export_mesh.stl(filepath="duct.stl", use_selection=True)
 
+for obj in bpy.data.collections["Cells"].all_objects: obj.select_set(False)
+bpy.context.scene.objects["Cell.029"].select_set(True)
+bpy.ops.export_mesh.stl(filepath="mesh.stl", use_selection=True)
+
+# get a cell and apply modifiers
+bpy.context.view_layer.objects.active = bpy.context.scene.objects["Cell.029"]
 print(bpy.context.object.name)
-obj = bpy.context.object
+obj = bpy.context.object.evaluated_get(bpy.context.evaluated_depsgraph_get())
 
+# write out a custom ply mesh file
 fname = "mesh.ply"
 with open(fname, "w") as file:
+
+  # write out the file header
   file.write("ply\n")
   #file.write("format binary_little_endian 1.0\n")
   file.write("format ascii 1.0\n")
-  #file.write("comment Mini-Gland mesh format 1.0\n")
+  file.write("comment Mini-Gland mesh format 1.0\n")
   file.write("element vertex " + str(len(obj.data.vertices)) + "\n")
   file.write("property float x\n")
   file.write("property float y\n")
   file.write("property float z\n")
   file.write("element face " + str(len(obj.data.polygons)) + "\n")
   file.write("property list uchar int vertex_index\n")
-  #file.write("property int face_type\n")
+  file.write("property int face_type\n")
   file.write("end_header\n")
 
+  # write out the vertex data
   for v in obj.data.vertices:
     p = v.co + obj.location
     file.write(str(p.x) + " " + str(p.y) + " " + str(p.z) + "\n")
 
+  # write out the face data
   for poly in obj.data.polygons:
     file.write(str(poly.loop_total) + " ")
+    tri_c = mathutils.Vector([0,0,0]) # surface triangle center
+    # write out vertex indices
     for loop_index in range(poly.loop_start, poly.loop_start + poly.loop_total):
-      file.write(str(obj.data.loops[loop_index].vertex_index) + " ")
+      pi = obj.data.loops[loop_index].vertex_index
+      file.write(str(pi) + " ")
+      tri_c += obj.data.vertices[pi].co + obj.location
+    tri_c /= 3.0                      # use surface triangle center for distance calculations
+    # write out face type
+    d = dist(PTS[DSEG.idx_in].position, PTS[DSEG.idx_out].position, tri_c) # distance from duct center line
+    da = d - cell_types[DSEG.ctype]['radii'][0]                            # distance from duct inner limit
+    db = cell_types[DSEG.ctype]['radii'][1] - d                            # distance from duct outer limit
+    if(da < 1.0): file.write(str(0))     # apical
+    elif(db < 1.0): file.write(str(2))   # basal
+    else : file.write(str(1))            # basolateral
     file.write("\n")
 
+#-------------------------------------------------------------------------------
 
+end = time.time()
+print(time.strftime("run time %H:%M:%S", time.gmtime(end-start)))
 
 #-------------------------------------------------------------------------------
 # DEBUG: run interactive interpreter
