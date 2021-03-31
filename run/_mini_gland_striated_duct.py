@@ -2,10 +2,6 @@
 #
 # Sets up and runs a Blender animation to "grow" parotid gland cells around (and within) duct constraints.
 #
-# Usage:
-#  navigate to folder containing this file, then
-#  python3 mini_gland_striated_duct.py
-#
 # J.rugis
 # 30.03.2021
 #
@@ -40,6 +36,7 @@ class cDseg: # duct segment structure
 C_RADIUS = 2.3             # cell seed radius
 C_SEEDS = 80               # cell seed target count
 C_RETRIES = 80000          # cell seed creation retries
+C_FRAMES = 50              # cell growing animation frame count
 
 # duct segment end-points: position
 PTS = (
@@ -201,7 +198,7 @@ def write_ply(cname):
   obj = bpy.context.object.evaluated_get(bpy.context.evaluated_depsgraph_get())
 
   # write the file
-  with open("../meshes/P" + cname.replace('.', '_') + ".ply", "w") as file:
+  with open("PL-" + cname.replace('.', '_') + ".ply", "w") as file:
     # write out the file header
     file.write("ply\n")
     #file.write("format binary_little_endian 1.0\n")
@@ -234,8 +231,8 @@ def write_ply(cname):
       tri_c /= 3.0                      # use surface triangle center for distance calculations
       # write out face type
       d = dist(PTS[DSEG.idx_in].position, PTS[DSEG.idx_out].position, tri_c) # distance from duct center line
-      da = d - cell_types[DSEG.ctype]['duct_radii'][0]                            # distance from duct inner limit
-      db = cell_types[DSEG.ctype]['duct_radii'][1] - d                            # distance from duct outer limit
+      da = d - cell_types[DSEG.ctype]['duct_radii'][0]                     # distance from duct inner limit
+      db = cell_types[DSEG.ctype]['duct_radii'][1] - d                     # distance from duct outer limit
       if(da < 1.0): file.write(str(0))     # apical
       elif(db < 1.0): file.write(str(2))   # basal
       else : file.write(str(1))            # basolateral
@@ -263,18 +260,18 @@ bpy.data.objects.remove(bpy.data.objects['Icosphere']) # remove the prototype ce
 
 # animate (to apply physics) 
 bpy.context.scene.frame_current = 1
-for frame in range(50):
+for frame in range(C_FRAMES):
   bpy.context.view_layer.update()
   bpy.context.scene.frame_current += 1
 
 # save the cell meshes...
-os.system("rm ../meshes/*") # delete any existing mesh files
-# ---- as individual stl files
+# ---- as individual standard ply files
 for obj in bpy.data.collections["Duct"].all_objects: obj.select_set(False)
 for obj in bpy.data.collections["Cells"].all_objects: obj.select_set(False)
 for obj in bpy.data.collections["Cells"].all_objects:
   obj.select_set(True)
-  bpy.ops.export_mesh.stl(filepath="../meshes/" + obj.name.replace('.', '_') + ".stl", use_selection=True)
+  bpy.ops.export_mesh.ply(filepath=obj.name.replace('.', '_') + ".ply", use_ascii=False,\
+    use_normals=False, use_uv_coords=False, use_colors=False, use_selection=True)
   obj.select_set(False)
 # ---- as individual custom ply files
 for obj in bpy.data.collections["Cells"].all_objects:
