@@ -2,10 +2,27 @@ create_mesh notes
 =================
 
 TODO:
-Python Blender script 
-  - output ply file (single cell), simple use dnl for apical, basal, etc
-  - 
+Python package: trimesh
+Python package: vedo
   
 
 CHECK THIS:  
 Could surface triagles dnl assign to the wrong duct type?
+
+Workflow
+========
+
+brew install cgal
+
+download cgal examples
+cd ~/Downloads/CGAL-5.2.1-examples/examples/Mesh_3
+cmake -DCMAKE_BUILD_TYPE=Release .
+make mesh_3D_image
+make mesh_3D_image_with_features
+
+cd /path/to/your/program
+path/to/cgal/Scripts/scripts/cgal_create_CMakeLists -s your_program
+cmake -DCMAKE_BUILD_TYPE=Release .
+make
+
+CGAL - tetrahedral remeshing
