@@ -34,9 +34,9 @@ class cDseg: # duct segment structure
 #-------------------------------------------------------------------------------
 
 C_RADIUS = 2.3             # cell seed radius
-C_SEEDS = 80               # cell seed target count
+C_SEEDS = 8               # cell seed target count
 C_RETRIES = 80000          # cell seed creation retries
-C_FRAMES = 50              # cell growing animation frame count
+C_FRAMES = 5              # cell growing animation frame count
 
 # duct segment end-points: position
 PTS = (

@@ -7,6 +7,13 @@
 #
 import pyvista as pv
 import numpy as np
+from tifffile import imsave
+
+#-------------------------------------------------------------------------------
+# global constants
+#-------------------------------------------------------------------------------
+
+PIXEL_SIZE = 0.1
 
 #-------------------------------------------------------------------------------
 # function definitions
@@ -18,13 +25,40 @@ import numpy as np
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
 
+# get a list of all the cell ply files
+
+
+#-----------------------------
+# get extents over all cells, create a positive octant translation vector
 fname = "Cell_001.ply"
 surface = pv.read(fname)
-cpos = surface.plot(show_edges=True)
+#print(surface.bounds)
+bounds = surface.bounds
+trans = [-1.0*surface.bounds[0]+PIXEL_SIZE/2.0, -1.0*surface.bounds[2]+PIXEL_SIZE/2.0, -1.0*surface.bounds[4]+PIXEL_SIZE/2.0]
 
-voxels = pv.voxelize(surface, 2)
-cpos = voxels.plot(color=True, show_edges=True)
+#-----------------------------
+# voxelize each cell and merge it into an image pixel array 
 
+image = np.zeros((512,512,512), 'uint16') # create a blank image array
+
+fname = "Cell_001.ply"
+surface = pv.read(fname)
+surface.translate(trans)
+#print(surface.bounds)
+#cpos = surface.plot(show_edges=True)
+
+voxels = pv.voxelize(surface, density=PIXEL_SIZE)
+#print(voxels.n_cells)
+#print(voxels.cell_centers().points)
+voxels.plot(color=True, show_edges=True)
+
+centers = np.around(voxels.cell_centers().points / PIXEL_SIZE).astype(int)
+#print(centers.shape)
+#print(np.amin(centers, axis=0))
+#print(np.amax(centers, axis=0))
+
+for row in centers: image[tuple(row)] = 200
+imsave('stack.tif', image) # save the image
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------

@@ -5,8 +5,18 @@
 # J.rugis
 # 30.03.2021
 #
-import os
+import subprocess
 import time
+
+#-------------------------------------------------------------------------------
+# function definitions
+#-------------------------------------------------------------------------------
+def sys_call(cmd):
+  sp = subprocess.run(cmd, shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+  if sp.returncode != 0:
+    print("ERROR:", sp)
+    exit()
+  return
 
 #-------------------------------------------------------------------------------
 #-------------------------------------------------------------------------------
@@ -19,11 +29,13 @@ start = time.time()
 #-----------------------------
 # use blender module to create meshes
 print("creating striated duct meshes...")
-os.system("rm -f *.ply") # delete any existing mesh files
-os.system("/usr/local/bin/python3.9 _mini_gland_striated_duct.py >/dev/null 2>&1")
+sys_call("rm -f *.ply")
+sys_call("python3.9 _mini_gland_striated_duct.py")
 
 #-----------------------------
 # convert meshes to image stack (ply -> tiff)
+print("converting meshes to tiff stack...")
+sys_call("python3.7 _ply2stack.py")
 
 #-----------------------------
 # process the image stack (tiff -> inr)
