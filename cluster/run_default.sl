@@ -18,4 +18,7 @@ echo $job_dir
 cd $job_dir
 
 # use blender module to create meshes
-time singularity exec -B $PWD blender.sif python3 _mini_gland_striated_duct.py
+BLENDER_IMG=/nesi/project/nesi00119/riom/blender.sif
+
+echo "creating striated duct meshes..."
+time singularity exec -B $PWD "$BLENDER_IMG" python3 _create_mini_gland.py
