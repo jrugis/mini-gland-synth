@@ -29,13 +29,13 @@ start = time.time()
 #-----------------------------
 # use blender module to create meshes
 print("creating striated duct meshes...")
-sys_call("rm -f *.ply")
+sys_call("rm -f Cell*.ply")
 sys_call("python3.9 _mini_gland_striated_duct.py")
 
 #-----------------------------
 # convert meshes to image stack (ply -> tiff)
-print("converting meshes to tiff stack...")
-sys_call("python3.7 _ply2stack.py")
+#print("converting meshes to tiff stack...")
+#sys_call("python3.7 _ply2stack.py")
 #sys_call("rm -f *.ply")
 
 #-----------------------------

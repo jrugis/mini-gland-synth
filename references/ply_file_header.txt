@@ -6,7 +6,7 @@ Mini-gland mesh: ply file header
 
 ---------
 ply
-format binary_little_endian 1.0
+format ascii 1.0
 comment Mini-Gland mesh format 1.0
 element vertex NV
 property float x
@@ -23,17 +23,19 @@ property int v2
 property int v3
 property int v4
 element cell NC
-property int cell_type
 property list int int face_index
 property list int int tetrahedron_index
-element duct_vertex NDV
+element duct_node NDN
 property float x
 property float y
 property float z
 element duct_segment NDS
-property int vertex_in
-property int vertex_out
-property float radius
+property int node_in
+property int node_out
+property float inner_diameter
+property float outer_diameter
+property int duct_type
+property list int int cell_index 
 end_header
 ---------
 
@@ -42,15 +44,17 @@ NV = total number of vertices
 NF = total number of surface triangle faces
 NT = total number of tetrahedra
 NC = total number of cells
+NDN = number of duct nodes
+NDS = number of duct segments
 
 face_type 0 = apical
           1 = basolateral
           2 = basal
 
-cell_type 0 = acinus
-          1 = intercalated duct
-	  2 = striated duct		  
+duct_type 0 = acinus
+          1 = intercalated
+          2 = striated		  
 
 note:
-- only the apical cells need to contain tetrahedra  		  
+- only the apical duct cells need to contain tetrahedra  		  
 		

@@ -196,7 +196,7 @@ for obj in bpy.data.collections["Duct"].all_objects: obj.select_set(False)
 for obj in bpy.data.collections["Cells"].all_objects: obj.select_set(False)
 for obj in bpy.data.collections["Cells"].all_objects:
   obj.select_set(True)
-  bpy.ops.export_mesh.ply(filepath=obj.name.replace('.', '_') + ".ply",\
+  bpy.ops.export_mesh.ply(filepath=obj.name.replace('.', '_') + "_0.ply",\
     use_normals=False, use_uv_coords=False, use_colors=False, use_selection=True)
   obj.select_set(False)
 
