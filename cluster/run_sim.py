@@ -12,7 +12,9 @@ parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 )
 parser.add_argument("slurm_script", type=Path, help="SLURM script to use")
-parser.add_argument("-n", "--n-sims", type=int, default=20, help="number of simulations")
+parser.add_argument(
+    "-n", "--n-sims", type=int, default=20, help="number of simulations"
+)
 args = parser.parse_args()
 
 if not args.slurm_script.is_file():
@@ -26,7 +28,10 @@ sims = list(range(args.n_sims))
 repo_dir = Path(__file__).absolute().parent.parent
 print("repo dir:", repo_dir)
 
-assert "project" in repo_dir.parts, "Repository should be on project filesystem"
+project_root = "/scale_wlg_persistent/filesets/project"
+if not str(repo_dir).startswith(project_root):
+    print("Repository should be on project filesystem.")
+    sys.exit(1)
 
 results_dir = Path("/scale_wlg_nobackup/filesets/nobackup", *repo_dir.parts[4:])
 results_dir = results_dir / "results" / time.strftime("%y%m%d_%H%M%S")
