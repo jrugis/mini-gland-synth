@@ -1,4 +1,5 @@
 import os
+import sys
 import subprocess
 import time
 import shutil
@@ -11,16 +12,15 @@ parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 )
 parser.add_argument("slurm_script", type=Path, help="SLURM script to use")
-parser.add_argument(
-    "-n", "--n-sims", type=int, default=20, help="number of simulations to run"
-)
+parser.add_argument("-n", "--n-sims", type=int, default=20, help="number of simulations")
 args = parser.parse_args()
 
-n_sims = args.n_sims
-slurm = args.slurm_script.absolute()
+if not args.slurm_script.is_file():
+    print(f"File '{args.slurm_script}' not found.")
+    sys.exit(1)
 
 # create the parameters sweep
-sims = list(range(n_sims))
+sims = list(range(args.n_sims))
 
 # create the top level results directory
 repo_dir = Path(__file__).absolute().parent.parent
@@ -48,7 +48,7 @@ with (results_dir / "dirs.txt").open("w") as f1:
         shutil.copy(run_dir / "_mini_gland_striated_duct.py", param_dir)
 
 # copy the SLURM script and submit it as array job
-shutil.copy(slurm, results_dir / "run.sl")
+shutil.copy(args.slurm_script, results_dir / "run.sl")
 os.chdir(results_dir)
 
 cmd = "sbatch --array=1-" + str(len(sims)) + " run.sl"
