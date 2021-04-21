@@ -2,13 +2,22 @@ import os
 import subprocess
 import time
 import shutil
+import argparse
 from pathlib import Path
 
-# TODO add input parsing for slurm script
-slurm = "/nesi/project/nesi00119/riom/mini-gland-synth/cluster/run_default.sl"
+# get input from the command line
+parser = argparse.ArgumentParser(
+    description="Generate a set of meshes.",
+    formatter_class=argparse.ArgumentDefaultsHelpFormatter,
+)
+parser.add_argument("slurm_script", type=Path, help="SLURM script to use")
+parser.add_argument(
+    "-n", "--n-sims", type=int, default=20, help="number of simulations to run"
+)
+args = parser.parse_args()
 
-# TODO add input for parameters
-n_sims = 20
+n_sims = args.n_sims
+slurm = args.slurm_script.absolute()
 
 # create the parameters sweep
 sims = list(range(n_sims))
