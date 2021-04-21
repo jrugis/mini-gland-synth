@@ -8,10 +8,12 @@ git clone https://github.com/jrugis/mini-gland-synth.git
 
 Update the code to the latest version:
 ```
+cd mini-gland-synth
 git pull
 ```
 or
 ```
+cd mini-gland-synth
 git fetch origin
 git reset --hard origin/master
 ```
