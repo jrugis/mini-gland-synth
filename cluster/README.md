@@ -21,7 +21,7 @@ git reset --hard origin/master
 
 ## Prerequisites
 
-Make sure to have Python loaded (could be put in .bash_profile):
+If Python 3 is not loaded, you can do it as follows (could be put in .bash_profile):
 ```
 ml Python/3.8.2-gimkl-2020a
 ```
