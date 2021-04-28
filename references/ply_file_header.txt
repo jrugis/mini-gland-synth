@@ -8,6 +8,25 @@ Mini-gland mesh: ply file header
 ply
 format ascii 1.0
 comment Mini-Gland mesh format 1.0
+element duct_node NDN
+property float x
+property float y
+property float z
+element duct_segment NDS
+property int node_in
+property int node_out
+property float inner_diameter
+property float outer_diameter
+property int seg_type
+property ncells
+property icells
+element cell NC
+property int nverts
+property int iverts
+property int nfaces
+property int faces
+property int ntets
+property int itets
 element vertex NV
 property float x
 property float y
@@ -22,20 +41,6 @@ property int v1
 property int v2
 property int v3
 property int v4
-element cell NC
-property list int int face_index
-property list int int tetrahedron_index
-element duct_node NDN
-property float x
-property float y
-property float z
-element duct_segment NDS
-property int node_in
-property int node_out
-property float inner_diameter
-property float outer_diameter
-property int duct_type
-property list int int cell_index 
 end_header
 ---------
 

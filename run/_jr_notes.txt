@@ -2,12 +2,14 @@ create_mesh notes
 =================
 
 TODO:
-Python package: trimesh
-Python package: vedo
-  
+? Python package: trimesh
+? Python package: vedo
 
-CHECK THIS:  
-Could surface triagles dnl assign to the wrong duct type?
+
+
+CHECK:  
+
+
 
 Workflow
 ========
