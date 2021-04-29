@@ -43,3 +43,20 @@ and monitor progress using:
 ```
 squeue -u your_nesi_login
 ```
+
+
+## Build the Singularity image
+
+The Singularity image has to be built on a computer where you have admin rights, as root access is needed.
+
+Install [Singularity](https://sylabs.io/singularity/) then create the container using:
+```
+sudo singularity build blender.sif blender
+```
+This will download and compile Blender and all its dependencies to create a Python module.
+
+Once it is finished, you should obtain a `blender.sif` that you can upload on NeSI.
+
+Don't forget to update the path to this image in your sbatch scripts.
+
+**Note: at the time of writing (2021/04/29), building the image take 1h20min on a 8 cores / 2GHz laptop.**
