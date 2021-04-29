@@ -41,3 +41,6 @@ From: ubuntu:20.04
     # install gmsh and pygmsh
     apt-get install -y python3-gmsh python3-pip
     pip3 install pygmsh
+
+    # install additional python dependencies
+    pip3 install pyvista tifffile
