@@ -55,8 +55,8 @@ sudo singularity build blender.sif blender
 ```
 This will download and compile Blender and all its dependencies to create a Python module.
 
-Once it is finished, you should obtain a `blender.sif` that you can upload on NeSI.
+Once it is finished, you should obtain a `blender.sif` file that you can upload on NeSI.
 
 Don't forget to update the path to this image in your sbatch scripts.
 
-**Note: at the time of writing (2021/04/29), building the image take 1h20min on a 8 cores / 2GHz laptop.**
+*Note: at the time of writing (2021/04/29), building the image take 1h20min on a 8 cores / 2GHz laptop.*
