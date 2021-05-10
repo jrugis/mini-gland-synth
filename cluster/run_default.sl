@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-#SBATCH --time=00-00:30:00
+#SBATCH --time=00-00:50:00
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=2
-#SBATCH --mem=1GB
+#SBATCH --cpus-per-task=12
+#SBATCH --mem=3GB
 
 echo $HOSTNAME
 echo "task array id: $SLURM_ARRAY_TASK_ID"
