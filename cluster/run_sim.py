@@ -51,6 +51,7 @@ with (results_dir / "dirs.txt").open("w") as f1:
         # copy some files into parameter directory
         shutil.copy(run_dir / "_create_mini_gland.py", param_dir)
         shutil.copy(run_dir / "_mini_gland_striated_duct.py", param_dir)
+        shutil.copy(run_dir / "_ply2ply.py", param_dir)
 
 # copy the SLURM script and submit it as array job
 shutil.copy(args.slurm_script, results_dir / "run.sl")
