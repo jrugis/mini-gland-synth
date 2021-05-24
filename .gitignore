@@ -9,6 +9,9 @@
 *.log
 *.tif
 
+#exceptions
+!mini_gland_duct.ply
+
 #----------------------------------
 # Mac excludes
 
