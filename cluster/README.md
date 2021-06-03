@@ -35,9 +35,14 @@ cd mini-gland-synth/cluster
 cp run_default.sl my_run_xxxx.sl
 nano my_run_xxxx.sl
 ```
+and the parameters file:
+```
+cp ../run/params.ini my_params_xxxx.ini
+nano my_params_xxxx.ini
+```
 submit the job:
 ```
-python run_sim.py my_run_xxxx.sl
+python run_sim.py my_run_xxxx.sl my_params_xxxx.ini
 ```
 and monitor progress using:
 ```

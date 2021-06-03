@@ -12,6 +12,7 @@ parser = argparse.ArgumentParser(
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 )
 parser.add_argument("slurm_script", type=Path, help="SLURM script to use")
+parser.add_argument("params_file", type=Path, help="parameters as a .ini file")
 parser.add_argument(
     "-n", "--n-sims", type=int, default=20, help="number of simulations"
 )
@@ -47,6 +48,9 @@ with (results_dir / "dirs.txt").open("w") as f1:
         param_dir = results_dir / f"simulation-{s:04}"
         param_dir.mkdir(parents=True, exist_ok=True)
         f1.write(str(param_dir) + "\n")
+
+        # copy the parameters file
+        shutil.copy(args.params_file, param_dir / "params.ini")
 
         # copy some files into parameter directory
         shutil.copy(run_dir / "_create_mini_gland.py", param_dir)
