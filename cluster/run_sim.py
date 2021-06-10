@@ -30,7 +30,7 @@ if not args.slurm_script.is_file():
     sys.exit(1)
 
 # create the parameters sweep
-sims = list(range(args.n_sims))
+sims = list(range(1, args.n_sims + 1))
 
 # create the top level results directory
 repo_dir = Path(__file__).absolute().parent.parent
