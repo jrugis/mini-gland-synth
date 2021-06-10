@@ -6,12 +6,20 @@ import shutil
 import argparse
 from pathlib import Path
 
+# project and nobackup root folders path on NeSI
+PROJECT_ROOT_DIR = "/scale_wlg_persistent/filesets/project"
+NOBACKUP_ROOT_DIR = "/scale_wlg_nobackup/filesets/nobackup"
+
+# default parameter file name in the run folder
+PARAMS_FILE = "params.ini"
+
 # get input from the command line
 parser = argparse.ArgumentParser(
     description="Generate a set of meshes.",
     formatter_class=argparse.ArgumentDefaultsHelpFormatter,
 )
 parser.add_argument("slurm_script", type=Path, help="SLURM script to use")
+parser.add_argument("params_file", type=Path, help="parameters as a .ini file")
 parser.add_argument(
     "-n", "--n-sims", type=int, default=20, help="number of simulations"
 )
@@ -28,12 +36,11 @@ sims = list(range(args.n_sims))
 repo_dir = Path(__file__).absolute().parent.parent
 print("repo dir:", repo_dir)
 
-project_root = "/scale_wlg_persistent/filesets/project"
-if not str(repo_dir).startswith(project_root):
+if not str(repo_dir).startswith(PROJECT_ROOT_DIR):
     print("Repository should be on project filesystem.")
     sys.exit(1)
 
-results_dir = Path("/scale_wlg_nobackup/filesets/nobackup", *repo_dir.parts[4:])
+results_dir = Path(NOBACKUP_ROOT_DIR, *repo_dir.parts[4:])
 results_dir = results_dir / "results" / time.strftime("%y%m%d_%H%M%S")
 
 print("result dir:", results_dir)
@@ -48,10 +55,14 @@ with (results_dir / "dirs.txt").open("w") as f1:
         param_dir.mkdir(parents=True, exist_ok=True)
         f1.write(str(param_dir) + "\n")
 
+        # copy the parameters file
+        shutil.copy(args.params_file, param_dir / PARAMS_FILE)
+
         # copy some files into parameter directory
         shutil.copy(run_dir / "_create_mini_gland.py", param_dir)
         shutil.copy(run_dir / "_mini_gland_striated_duct.py", param_dir)
         shutil.copy(run_dir / "_ply2ply.py", param_dir)
+        shutil.copy(run_dir / "mini_gland_duct.ply", param_dir)
 
 # copy the SLURM script and submit it as array job
 shutil.copy(args.slurm_script, results_dir / "run.sl")

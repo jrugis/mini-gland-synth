@@ -8,6 +8,7 @@
 *.ply
 *.log
 *.tif
+my_*
 
 #exceptions
 !mini_gland_duct.ply

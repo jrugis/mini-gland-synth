@@ -14,6 +14,7 @@ import os
 import random
 import sys
 import time
+import configparser
 
 #-------------------------------------------------------------------------------
 # class (structure) definitions
@@ -33,10 +34,14 @@ class cDseg: # duct segment structure
 # global constants
 #-------------------------------------------------------------------------------
 
-C_RADIUS = 2.3             # cell seed radius
-C_SEEDS = 80               # cell seed target count
-C_RETRIES = 80000          # cell seed creation retries
-C_FRAMES = 50              # cell growing animation frame count
+config = configparser.ConfigParser(inline_comment_prefixes="#")
+config.optionxform=str
+config.read("params.ini")
+
+C_RADIUS = config.getfloat("mini_gland_striated_duct", "C_RADIUS")
+C_SEEDS = config.getint("mini_gland_striated_duct", "C_SEEDS")
+C_RETRIES = config.getint("mini_gland_striated_duct", "C_RETRIES")
+C_FRAMES = config.getint("mini_gland_striated_duct", "C_FRAMES")
 
 # duct segment end-points: position
 PTS = (

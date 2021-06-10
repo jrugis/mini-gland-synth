@@ -35,13 +35,29 @@ cd mini-gland-synth/cluster
 cp run_default.sl my_run_xxxx.sl
 nano my_run_xxxx.sl
 ```
+and the parameters file:
+```
+cp ../run/params.ini my_params_xxxx.ini
+nano my_params_xxxx.ini
+```
 submit the job:
 ```
-python run_sim.py my_run_xxxx.sl
+python run_sim.py my_run_xxxx.sl my_params_xxxx.ini
 ```
 and monitor progress using:
 ```
 squeue -u your_nesi_login
+```
+
+Note that you can specify the number of simulations using the `-n` or `--n-sims` options of `run_sim.py`.
+For example, to run 2 simulations, use:
+```
+python run_sim.py -n 2 my_run_xxxx.sl my_params_xxxx.ini
+```
+
+Default values for the options of `run_sim.py` can be obtained using `-h` or `--help`:
+```
+python run_sim.py -h
 ```
 
 

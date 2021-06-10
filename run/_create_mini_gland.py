@@ -36,7 +36,7 @@ sys_call("python3.9 _mini_gland_striated_duct.py")
 # combine multiple ply files into a single ply file (ply -> ply)
 print("combining ply files...")
 sys_call("python3.8 _ply2ply.py")
-sys_call("rm -f Cell_*.ply")
+#sys_call("rm -f Cell_*.ply")
 
 #-----------------------------
 # convert meshes to image stack (ply -> tiff)

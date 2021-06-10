@@ -38,7 +38,7 @@ class sDSeg(NamedTuple):
 def get_ftype(verts, id, od): # face vertices, duct inner diameter, duct outer diamter
   c = np.mean(verts, axis=0)
   d = np.sqrt(c[0]**2 + c[1]**2)
-  if((d - id/2.0) < 1.0): return(0)    # apical
+  if((d - id/2.0) < 1.5): return(0)    # apical
   elif((od/2.0 - d) < 1.0): return(2)  # basal
   else : return(1)                     # basolateral
 
@@ -162,22 +162,29 @@ for fname in flist:
     pfile.write("{:.2f} {:.2f} {:.2f}\n".format(*p))
 
 # --- write out oriented face data (all cells)
-pi_offset = 0  # point index offset
+bad_cell = False  # cell mesh integrity check
+pi_offset = 0     # point index offset
 for i, fname in enumerate(flist):
+  n_apical = 0    # number of apical faces for this cell
   mesh = pv.read(fname)
   for pi in mesh.faces.reshape((-1,4))[:, 1:]:  # three indices per row
     # -- vertex indices
     pfile.write("{:d} {:d} {:d} ".format(*(pi+pi_offset)))
-    # -- face type (from cell duct segments)
+    # -- face type
     d = dsegs[cell_dsegs[i]]
-    pfile.write(str(get_ftype(mesh.points[pi], d.inner_diameter, d.outer_diameter)) + "\n")
+    ftype = get_ftype(mesh.points[pi], d.inner_diameter, d.outer_diameter)
+    if(ftype == 0): n_apical += 1
+    pfile.write(str(ftype) + "\n")
   pi_offset += mesh.n_points
+  if(n_apical == 0): bad_cell = True # check if cell mesh has no apical faces
 
 # --- write out oriented tetrahedron data (all cells)
 # NOTE: no tets for now
 
 # --- done
 pfile.close()
+if(bad_cell):
+  exit(50)  # special error return code if any bad cells
 
 #------------------------------------------------
 
