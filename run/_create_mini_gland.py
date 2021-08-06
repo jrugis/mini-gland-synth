@@ -30,12 +30,12 @@ start = time.time()
 # use blender module to create meshes
 print("creating striated duct meshes...")
 sys_call("rm -f Cell*.ply")
-sys_call("python3.9 _mini_gland_striated_duct.py")
+sys_call("python3 _mini_gland_striated_duct.py")
 
 #-----------------------------
 # combine multiple ply files into a single ply file (ply -> ply)
 print("combining ply files...")
-sys_call("python3.8 _ply2ply.py")
+sys_call("python3 _ply2ply.py")
 #sys_call("rm -f Cell_*.ply")
 
 #-----------------------------
