@@ -9,15 +9,15 @@ echo "task array id: $SLURM_ARRAY_TASK_ID"
 
 # load environment modules
 ml purge 2> /dev/null
-ml Singularity/3.7.1
+ml BlenderPy/.2.93.1-gimkl-2020a-Python-3.9.5
+
+# activate the virtual environment
+VENV_PATH=/nesi/project/nesi00119/mini-gland-synth-venv
+source ${VENV_PATH}/bin/activate
 
 # directory associated with job array
 job_dir=$( head -n $SLURM_ARRAY_TASK_ID dirs.txt | tail -1 )
 echo "job dir: $job_dir"
 cd $job_dir
 
-# use blender module to create meshes
-BLENDER_IMG=/nesi/project/nesi00119/containers/blender_build_20210429.sif
-
-echo "launching singularity container..."
-singularity exec -B $PWD "$BLENDER_IMG" python3 _create_mini_gland.py
+python3 _create_mini_gland.py
