@@ -9,7 +9,7 @@ echo "task array id: $SLURM_ARRAY_TASK_ID"
 
 # load environment modules
 ml purge 2> /dev/null
-ml BlenderPy/.2.93.1-gimkl-2020a-Python-3.9.5
+ml BlenderPy/2.93.1-gimkl-2020a-Python-3.9.5
 
 # activate the virtual environment
 VENV_PATH=/nesi/project/nesi00119/mini-gland-synth-venv

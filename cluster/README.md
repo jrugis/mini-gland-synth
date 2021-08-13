@@ -67,7 +67,7 @@ The virtual environment is shared between users of the project and need to be
 created only once:
 ```
 module purge
-module load BlenderPy/.2.93.1-gimkl-2020a-Python-3.9.5
+module load BlenderPy/2.93.1-gimkl-2020a-Python-3.9.5
 VENV_PATH="/nesi/project/nesi00119/mini-gland-synth-venv"
 python3 -m venv --system-site-packages "$VENV_PATH"
 source "${VENV_PATH}/bin/activate"
